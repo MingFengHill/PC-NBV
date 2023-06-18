@@ -1,4 +1,5 @@
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 import numpy as np
 import tensorflow as tf
 import scipy.io as sio
@@ -9,30 +10,24 @@ import time
 import pdb
 
 if __name__ == '__main__':
-
-    os.environ['CUDA_VISIBLE_DEVICES'] = "2"
-    
     # view num
     view_num = 33
 
     # path
-    data_type = 'train'
-    ShapeNetv1_dir = '/home/zengrui/IROS/pcn/data/ShapeNetv1/'    
-    pc_dir = "/home/zengrui/IROS/pcn/PC_results/ShapeNetv1/" + data_type + "/pcd"
-    save_dir = "/home/zengrui/IROS/pcn/NBV_data/shapenet_33_views_640x480"
-    model_dir = '/home/zengrui/IROS/pcn/data/ShapeNetv1/' + data_type
+    save_dir = "/home/wang/data/tf/train_output"
+    data_dir = "/home/wang/data/tf/train"
 
     # for calculating surface coverage and register
     part_tensor = tf.placeholder(tf.float32, (1, None, 3))
     gt_tensor = tf.placeholder(tf.float32, (1, None, 3))
-    sess = tf.Session()
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth=True
+    sess = tf.Session(config=config)
     dist1, _, dist2, _ = tf_nndistance.nn_distance(part_tensor, gt_tensor)
 
-    class_list = os.listdir(model_dir)
+    for class_id in range(1):
 
-    for class_id in class_list:
-
-        model_list = os.listdir(os.path.join(ShapeNetv1_dir, data_type, class_id))
+        model_list = os.listdir(data_dir)
 
         for model in model_list:
             save_model_path = os.path.join(save_dir, model)
@@ -41,8 +36,8 @@ if __name__ == '__main__':
                 continue
 
             # gt point cloud
-            gt_points = sio.loadmat(os.path.join(ShapeNetv1_dir, data_type, class_id, model, 'model.mat'))
-            gt_points = np.array(gt_points['points'])
+            points_cloud = open3d.io.read_point_cloud(os.path.join(data_dir, model, 'model.pcd'))
+            gt_points = np.asarray(points_cloud.points)
             if not os.path.exists(os.path.join(save_dir, model)):
                 os.makedirs(os.path.join(save_dir, model))
 
@@ -52,7 +47,7 @@ if __name__ == '__main__':
             part_points_list = []
             
             for i in range(view_num):
-                pcd_path = os.path.join(pc_dir, model, str(i) + ".pcd")
+                pcd_path = os.path.join(data_dir, model, str(i) + ".pcd")
                 if os.path.exists(pcd_path):
                     cur_pc = open3d.io.read_point_cloud(pcd_path)
                     cur_points = np.asarray(cur_pc.points)  

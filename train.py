@@ -11,7 +11,7 @@ import pdb
 from tensorpack import dataflow
 from scipy import stats
 import csv
-
+# nohup python train.py > test_train.log 2>&1 & 
 
 def train(args):
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
@@ -139,9 +139,9 @@ def train(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--lmdb_train', default='data/train.lmdb')
-    parser.add_argument('--lmdb_valid', default='data/valid.lmdb')
-    parser.add_argument('--log_dir', default='log/7_11_1')
+    parser.add_argument('--lmdb_train', default='/root/tf/train.lmdb')
+    parser.add_argument('--lmdb_valid', default='/root/tf/test.lmdb')
+    parser.add_argument('--log_dir', default='log/6_13')
     parser.add_argument('--model_type', default='pc-nbv')
     parser.add_argument('--batch_size', type=int, default=32)
     parser.add_argument('--num_input_points', type=int, default=512)
@@ -156,7 +156,7 @@ if __name__ == '__main__':
     parser.add_argument('--steps_per_print', type=int, default=100)
     parser.add_argument('--steps_per_eval', type=int, default=1000)
     parser.add_argument('--steps_per_save', type=int, default=5000)
-    parser.add_argument('--gpu', default='2')
+    parser.add_argument('--gpu', default='1')
 
     args = parser.parse_args()
 

@@ -11,6 +11,9 @@ import pdb
 from tensorpack import dataflow
 from scipy import stats
 import csv
+import numpy as np
+import open3d as o3d
+# nohup python test.py > test_test.log 2>&1 &
 
 
 def train(args):
@@ -49,10 +52,24 @@ def train(args):
     test_total_time = 0
     test_total_spearmanr = 0
     sess.run(tf.local_variables_initializer())
-    for i in range(num_eval_steps):
+    for i in range(1):
         print('step ' + str(i))
         
         ids, inputs, npts, gt, view_state, eval_value = next(test_gen)
+        
+        # for test
+        print("inputs type: {}".format(type(inputs)))
+        print("npts type: {}".format(type(npts)))
+        print("gt type: {}".format(type(gt)))
+        print("view_state type: {}".format(type(view_state)))
+        print("eval_value type: {}".format(type(eval_value)))
+        # pcd_gt = o3d.geometry.PointCloud()
+        # pcd_gt.points = o3d.utility.Vector3dVector(np.asarray(gt[0]))
+        # o3d.io.write_point_cloud("./pcd/gt.ply", pcd_gt)
+        # pcd_input = o3d.geometry.PointCloud()
+        # pcd_input.points = o3d.utility.Vector3dVector(np.asarray(inputs[0]))
+        # o3d.io.write_point_cloud("./pcd/input.ply", pcd_input)
+        
         feed_dict = {inputs_pl: inputs, npts_pl: npts, gt_pl: gt, view_state_pl:view_state, 
             eval_value_pl:eval_value[:, :, :1], is_training_pl: False}
         start = time.time()
@@ -66,7 +83,7 @@ def train(args):
         test_total_loss_eval += test_loss_eval
         test_total_spearmanr += test_spearmanr
         
-    summary = sess.run(test_summary, feed_dict={is_training_pl: False})
+    # summary = sess.run(test_summary, feed_dict={is_training_pl: False})
     print(colored('loss %.8f loss_eval %.8f spearmanr %.8f - time per batch %.4f' %
                   (test_total_loss / num_eval_steps, test_total_loss_eval / num_eval_steps,
                      test_total_spearmanr / num_eval_steps, test_total_time / num_eval_steps),
@@ -78,14 +95,14 @@ def train(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--lmdb_test', default='data/test.lmdb')
+    parser.add_argument('--lmdb_test', default='/root/tf/test.lmdb')
     parser.add_argument('--model_type', default='pc-nbv')
-    parser.add_argument('--checkpoint', default='/home/zengrui/IROS/pcn/log_shapenet/2_10_3_self/model-290000')
-    parser.add_argument('--batch_size', type=int, default=32)
+    parser.add_argument('--checkpoint', default='/root/tf/PC-NBV/log/6_13/model-400000')
+    parser.add_argument('--batch_size', type=int, default=1)
     parser.add_argument('--num_input_points', type=int, default=512)
     parser.add_argument('--num_gt_points', type=int, default=1024)
     parser.add_argument('--views', type=int, default=33)
-    parser.add_argument('--gpu', default='2')
+    parser.add_argument('--gpu', default='0')
 
     args = parser.parse_args()
 
