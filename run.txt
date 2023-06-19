@@ -1,7 +1,7 @@
 sudo update-alternatives --config gcc
 sudo update-alternatives --config g++
-export PATH=/usr/local/cuda-10.0/bin:$PATH  
-export LD_LIBRARY_PATH=/usr/local/cuda-10.0/lib64:$LD_LIBRARY_PATH
-export CUDA_HOME=/usr/local/cuda-10.0
+export PATH=/usr/local/cuda/bin:$PATH  
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
+export CUDA_HOME=/usr/local/cuda
 
 docker run --rm --runtime=nvidia   --gpus all -v /mnt/data1/wang/tf:/root/tf  -itd   f54f16c73e65  /bin/bash

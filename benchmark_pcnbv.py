@@ -78,6 +78,8 @@ def train(args):
                 if test_eval_value_pre[0][i][0] > max_score:
                     action = i
                     max_score = test_eval_value_pre[0][i][0]
+            with open(args.action_save_path, "a+", encoding="utf-8") as f:
+                f.write("{}\n".format(action))
             obs, rewards, dones, info = test_env.step(action)
             average_coverage[step_id + 1] += info["current_coverage"]
             if (step_id == args.step_size - 2) and (info["current_coverage"] <= 0.9):
@@ -104,9 +106,10 @@ if __name__ == '__main__':
     parser.add_argument('--views', type=int, default=33)
     parser.add_argument('--gpu', default='1')
     parser.add_argument('--view_num', type=int, default=33)
-    parser.add_argument('--test_data_path', type=str, default="/root/tf/benchmark_data/test_bak")
+    parser.add_argument('--test_data_path', type=str, default="/root/tf/benchmark_data/novel")
     parser.add_argument('--observation_space_dim', type=int, default=1024)
     parser.add_argument('--step_size', type=int, default=10)
+    parser.add_argument('--action_save_path', default='./novel_action.txt')
 
     args = parser.parse_args()
 
