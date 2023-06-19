@@ -129,6 +129,9 @@ class PointCloudNextBestViewEnv(gym.Env):
         self.step_cnt = 1
         self.model_name = self.shapenet_reader.get_model_info()
 
+    def __del__(self):
+        self.sess.close()
+
     def step(self, action):
         self.action_history.append(action)
         self.step_cnt += 1
