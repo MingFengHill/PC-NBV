@@ -8,6 +8,7 @@ class ShapenetReader():
                  data_path, 
                  view_num, 
                  logger,
+                 model_list,
                  is_cache=False):
         self.is_intial = False
         self.data_path = data_path
@@ -24,12 +25,21 @@ class ShapenetReader():
             self.logger.error("data path is not a directory")
             return
 
-        self.model_list = os.listdir(data_path)
+        # self.model_list = os.listdir(data_path)
+        # new_model_list = []
+        # for model in self.model_list:
+        #     model_path = os.path.join(data_path, model)
+        #     if os.path.isdir(model_path):
+        #         new_model_list.append(model)
         new_model_list = []
-        for model in self.model_list:
-            model_path = os.path.join(data_path, model)
-            if os.path.isdir(model_path):
-                new_model_list.append(model)
+        if not os.path.exists(model_list):
+            self.logger.error("model list is not exist")
+            return
+        with open(model_list, 'r') as f:
+            lines=f.readlines()
+            for index, line in enumerate(lines):
+                new_model_list.append(line.strip("\n"))
+        
         self.model_list = new_model_list
         self.model_num = len(self.model_list)
         self.set_model_id(0)

@@ -15,7 +15,7 @@ import envs.pc_nbv_env
 import logging
 import numpy as np
 # nohup python benchmark_pcnbv.py > benchmark.log 2>&1 &
-
+# export LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 
 def train(args):
     os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
@@ -50,9 +50,10 @@ def train(args):
     logger.addHandler(shell_handle)
     # create environment
     test_env = envs.pc_nbv_env.PointCloudNextBestViewEnv(data_path=args.test_data_path,
-                                                            view_num=args.view_num,
-                                                            observation_space_dim=args.observation_space_dim,
-                                                            log_level=logging.ERROR)
+                                                         model_list=args.model_list,
+                                                         view_num=args.view_num,
+                                                         observation_space_dim=args.observation_space_dim,
+                                                         log_level=logging.ERROR)
     model_size = test_env.shapenet_reader.model_num
     logger.info("model size: {}".format(model_size))
     init_step = 0
@@ -106,10 +107,11 @@ if __name__ == '__main__':
     parser.add_argument('--views', type=int, default=33)
     parser.add_argument('--gpu', default='1')
     parser.add_argument('--view_num', type=int, default=33)
-    parser.add_argument('--test_data_path', type=str, default="/root/tf/benchmark_data/novel")
+    parser.add_argument('--test_data_path', type=str, default="/root/tf/benchmark_data/scale_data_big")
     parser.add_argument('--observation_space_dim', type=int, default=1024)
     parser.add_argument('--step_size', type=int, default=10)
-    parser.add_argument('--action_save_path', default='./novel_action.txt')
+    parser.add_argument('--action_save_path', default='./verify_big_action.txt')
+    parser.add_argument('--model_list', default='./model_list/verify_big.txt')
 
     args = parser.parse_args()
 

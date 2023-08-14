@@ -41,6 +41,7 @@ def normalize_pc(points, logger, name):
 class PointCloudNextBestViewEnv(gym.Env):
     def __init__(self,
                  data_path,
+                 model_list,
                  view_num=33,
                  begin_view=-1,
                  observation_space_dim=-1,
@@ -69,7 +70,7 @@ class PointCloudNextBestViewEnv(gym.Env):
         real_data_path = data_path
         if env_id is not None:
             real_data_path = os.path.join(data_path, str(env_id))
-        self.shapenet_reader = shapenet_reader.ShapenetReader(real_data_path, view_num, self.logger, True)
+        self.shapenet_reader = shapenet_reader.ShapenetReader(real_data_path, view_num, self.logger, model_list, True)
         self.view_state = np.zeros(view_num, dtype=np.int32) 
         self.view_num = view_num
         self.begin_view = begin_view
