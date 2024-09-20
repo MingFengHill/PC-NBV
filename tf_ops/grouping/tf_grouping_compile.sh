@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
-#/bin/bash
-/usr/local/cuda/bin/nvcc tf_grouping_g.cu -o tf_grouping_g.cu.o -c -O2 -DGOOGLE_CUDA=1 -x cu -Xcompiler -fPIC
-g++ -std=c++11 tf_grouping.cpp tf_grouping_g.cu.o -o tf_grouping_so.so -shared -fPIC -I /usr/local/lib/python3.8/dist-packages/tensorflow_core/include  -I /usr/local/cuda/include -I /usr/local/lib/python3.8/dist-packages/tensorflow_core/include/external/nsync/public -lcudart -L /usr/local/cuda/lib64/ -L/usr/local/lib/python3.8/dist-packages/tensorflow_core -ltensorflow_framework -O2 -D_GLIBCXX_USE_CXX11_ABI=0
-#g++ -std=c++11 tf_grouping.cpp tf_grouping_g.cu.o -o tf_grouping_so.so -shared -fPIC -I /usr/local/lib/python2.7/dist-packages/tensorflow/include -I /usr/local/cuda-8.0/include -I /usr/local/lib/python2.7/dist-packages/tensorflow/include/external/nsync/public -lcudart -L /usr/local/cuda-8.0/lib64/ -L/usr/local/lib/python2.7/dist-packages/tensorflow -ltensorflow_framework -O2 -D_GLIBCXX_USE_CXX11_ABI=0
 
+TF_INC="/home/threed-detection/anaconda3/envs/pc-nbv/lib/python3.6/site-packages/tensorflow_core/include"
+TF_LIB_PATH="/home/threed-detection/anaconda3/envs/pc-nbv/lib/python3.6/site-packages/tensorflow_core/libtensorflow_framework.so.1"
+
+/usr/local/cuda/bin/nvcc tf_grouping_g.cu -o tf_grouping_g.cu.o -c -O2 -DGOOGLE_CUDA=1 -x cu -Xcompiler -fPIC
+
+g++ -std=c++11 tf_grouping.cpp tf_grouping_g.cu.o -o tf_grouping_so.so -shared -fPIC \
+    -I "$TF_INC" \
+    -I /usr/local/cuda/include \
+    -I "$TF_INC/external/nsync/public" \
+    -lcudart -L /usr/local/cuda/lib64/ \
+    "$TF_LIB_PATH" -O2 -D_GLIBCXX_USE_CXX11_ABI=0
+
+if [ $? -eq 0 ]; then
+    echo "Compilation successful"
+else
+    echo "Compilation failed"
+fi
