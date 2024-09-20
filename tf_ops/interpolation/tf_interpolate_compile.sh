@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
 # Set correct TensorFlow paths
-TF_INC="/home/threed-detection/anaconda3/envs/pc-nbv/lib/python3.6/site-packages/tensorflow_core/include"
-TF_LIB_PATH="/home/threed-detection/anaconda3/envs/pc-nbv/lib/python3.6/site-packages/tensorflow_core/libtensorflow_framework.so.1"
+TF_PATH=$(python -c "import tensorflow as tf; import os; print(os.path.dirname(tf.__file__))")
+TF_CORE_PATH=$(dirname "$TF_PATH")/tensorflow_core
+
+TF_INC="$TF_CORE_PATH/include"
+TF_LIB_PATH="$TF_CORE_PATH/libtensorflow_framework.so.1"
 
 # Compile and link C++ code
 g++ -std=c++11 tf_interpolate.cpp -o tf_interpolate_so.so -shared -fPIC \
